@@ -6,6 +6,7 @@ function Menu() {
   const [menuUrl, setMenuUrl] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     loadMenu()
@@ -37,7 +38,7 @@ function Menu() {
 
       if (data && data.length > 0) {
         const fileName = data[0].name
-        
+
         // Get public URL
         const { data: urlData } = supabase
           .storage
@@ -58,12 +59,17 @@ function Menu() {
     }
   }
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen)
+  }
+
   if (loading) {
     return (
       <div className="section">
         <div className="container">
           <div className="loading">
             <div className="spinner"></div>
+            <p>جاري تحميل القائمة...</p>
           </div>
         </div>
       </div>
@@ -73,28 +79,66 @@ function Menu() {
   return (
     <div className="section menu-page">
       <div className="container">
-        <h2 className="section-title">قائمة الطعام</h2>
-        
+        <div className="menu-header">
+          <h2 className="section-title">قائمة الطعام</h2>
+          <p className="menu-subtitle">تصفح قائمتنا المميزة من الأطباق الشهية</p>
+        </div>
+
         {error && !menuUrl ? (
-          <div className="error-message">
-            {error}
+          <div className="menu-error">
+            <div className="error-icon">📋</div>
+            <h3>{error}</h3>
+            <p>نعمل على تحديث القائمة، يرجى المحاولة لاحقاً</p>
           </div>
         ) : menuUrl ? (
-          <div className="menu-container">
-            <iframe
-              src={menuUrl}
-              className="menu-pdf"
-              title="قائمة الطعام"
-            />
+          <div className={`menu-container ${isFullscreen ? 'fullscreen' : ''}`}>
+            <div className="menu-controls">
+              <button
+                onClick={toggleFullscreen}
+                className="btn-control"
+                title={isFullscreen ? 'تصغير' : 'ملء الشاشة'}
+              >
+                <i className={`fas fa-${isFullscreen ? 'compress' : 'expand'}`}></i>
+              </button>
+              <a
+                href={menuUrl}
+                download
+                className="btn-control"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="تحميل القائمة"
+              >
+                <i className="fas fa-download"></i>
+              </a>
+              <a
+                href={menuUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-control"
+                title="فتح في نافذة جديدة"
+              >
+                <i className="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+
+            <div className="pdf-viewer-wrapper">
+              <iframe
+                src={`${menuUrl}#toolbar=1&navpanes=0&scrollbar=1`}
+                className="menu-pdf"
+                title="قائمة الطعام"
+              />
+            </div>
+
             <div className="menu-actions">
-              <a 
-                href={menuUrl} 
-                download 
+              <a
+                href={menuUrl}
+                download
                 className="btn btn-primary"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                تحميل القائمة
+                <i className="fas fa-download"></i>
+                تحميل القائمة PDF
               </a>
             </div>
           </div>
