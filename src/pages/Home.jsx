@@ -7,10 +7,10 @@ function Home() {
 
   // Array of images from the image folder
   const slides = [
-    '/public/1.jpeg',
-    '/public/2.jpeg',
-    '/public/3.jpeg',
-    '/public/4.jpeg'
+    '/1.jpeg',
+    '/2.jpeg',
+    '/3.jpeg',
+    '/4.jpeg'
   ]
 
   // Auto-change slides every 5 seconds
