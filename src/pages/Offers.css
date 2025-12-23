@@ -1,0 +1,420 @@
+.offers-page {
+  min-height: 70vh;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  position: relative;
+}
+
+.offers-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 5%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--warm-beige) 0%, transparent 70%);
+  opacity: 0.2;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.offer-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+  border: 2px solid var(--light-beige);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.offer-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--gradient-warm);
+  z-index: 2;
+}
+
+.offer-card::after {
+  content: 'عرض خاص';
+  position: absolute;
+  top: 20px;
+  right: -35px;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 8px 45px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 12px rgba(107, 31, 31, 0.3);
+  z-index: 3;
+}
+
+.offer-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--warm-beige);
+}
+
+.offer-image {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  position: relative;
+}
+
+.offer-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  pointer-events: none;
+}
+
+.offer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+
+.offer-card:hover .offer-image img {
+  transform: scale(1.1);
+}
+
+.offer-content {
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.offer-content h3 {
+  font-size: 1.7rem;
+  margin-bottom: 18px;
+  color: var(--primary-burgundy);
+  font-weight: 700;
+  line-height: 1.4;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.offer-content h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-warm);
+  border-radius: 2px;
+}
+
+.offer-description {
+  color: var(--text-secondary);
+  line-height: 1.9;
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+  flex: 1;
+}
+
+.offer-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 18px;
+  padding: 16px 20px;
+  background: var(--gradient-warm);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-price::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+  transform: skewX(-20deg);
+}
+
+.price-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.price-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-burgundy);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.price-value::before {
+  content: '💰';
+  font-size: 1.2rem;
+}
+
+.offer-date {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--light-beige);
+}
+
+.offer-date::before {
+  content: '📅';
+  font-size: 1rem;
+}
+
+/* Countdown Timer */
+.offer-countdown {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: linear-gradient(135deg, #F0F9F4 0%, #E8F5EC 100%);
+  border-radius: 12px;
+  border: 2px solid var(--success-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.offer-countdown.urgent {
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFE8E8 100%);
+  border-color: var(--error-color);
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+
+  0%,
+  100% {
+    border-color: var(--error-color);
+    box-shadow: 0 0 0 0 rgba(166, 57, 57, 0.4);
+  }
+
+  50% {
+    border-color: #C14545;
+    box-shadow: 0 0 0 8px rgba(166, 57, 57, 0);
+  }
+}
+
+.countdown-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.offer-countdown.urgent .countdown-label {
+  color: var(--error-color);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.countdown-timer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  min-width: 70px;
+  transition: var(--transition-smooth);
+}
+
+.offer-countdown.urgent .countdown-item {
+  background: linear-gradient(135deg, #FFF 0%, #FFE8E8 100%);
+}
+
+.countdown-item:hover {
+  transform: scale(1.05);
+}
+
+.countdown-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--success-color);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.offer-countdown.urgent .countdown-value {
+  color: var(--error-color);
+}
+
+.countdown-unit {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Expiring Soon Card Effect */
+.offer-card.expiring-soon {
+  border-color: var(--error-color);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 4px 16px rgba(107, 31, 31, 0.12), 0 0 0 0 rgba(166, 57, 57, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 8px 32px rgba(107, 31, 31, 0.16), 0 0 20px rgba(166, 57, 57, 0.3);
+  }
+}
+
+.offer-card.expiring-soon::before {
+  background: linear-gradient(135deg, var(--error-color) 0%, #C14545 100%);
+}
+
+.offer-card.expiring-soon::after {
+  content: '⚠️ ينتهي قريباً';
+  background: linear-gradient(135deg, var(--error-color) 0%, #C14545 100%);
+  animation: ribbon-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ribbon-pulse {
+
+  0%,
+  100% {
+    transform: rotate(45deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(45deg) scale(1.05);
+  }
+}
+
+.no-offers {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--light-beige);
+  margin: 40px auto;
+  max-width: 600px;
+}
+
+.no-offers p {
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.no-offers::before {
+  content: '🎁';
+  display: block;
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .offer-card::after {
+    font-size: 0.75rem;
+    padding: 6px 35px;
+    top: 15px;
+    right: -30px;
+  }
+
+  .offer-image {
+    height: 220px;
+  }
+
+  .offer-content {
+    padding: 24px;
+  }
+
+  .offer-content h3 {
+    font-size: 1.4rem;
+  }
+
+  .offer-description {
+    font-size: 1rem;
+  }
+
+  .offer-price {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .price-value {
+    font-size: 1.3rem;
+  }
+
+  .no-offers {
+    padding: 60px 20px;
+  }
+
+  .no-offers::before {
+    font-size: 3rem;
+  }
+
+  .no-offers p {
+    font-size: 1.1rem;
+  }
+}
