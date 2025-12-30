@@ -147,3 +147,5 @@ SELECT * FROM storage.buckets WHERE name = 'menu-pdf';
 
 للمزيد من المساعدة، راجع ملف `supabase-setup.sql` الكامل.
 
+
+

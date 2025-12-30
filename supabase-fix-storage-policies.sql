@@ -94,3 +94,5 @@ USING (bucket_id = 'menu-pdf');
 -- Check if buckets exist:
 -- SELECT * FROM storage.buckets WHERE name IN ('menu-pdf', 'offers-images');
 
+
+

@@ -62,3 +62,5 @@ USING (bucket_id = 'offers-images');
 -- Check storage policies:
 -- SELECT * FROM pg_policies WHERE schemaname = 'storage' AND tablename = 'objects';
 
+
+

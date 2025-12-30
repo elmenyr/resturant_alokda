@@ -35,14 +35,6 @@ function Navbar({ user }) {
             <li><Link to="/" onClick={() => setMenuOpen(false)}>الرئيسية</Link></li>
             <li><Link to="/menu" onClick={() => setMenuOpen(false)}>القائمة</Link></li>
             <li><Link to="/offers" onClick={() => setMenuOpen(false)}>العروض</Link></li>
-            {user ? (
-              <>
-                <li><Link to="/admin/dashboard" onClick={() => setMenuOpen(false)}>لوحة التحكم</Link></li>
-                <li><button onClick={handleLogout} className="btn-logout">تسجيل الخروج</button></li>
-              </>
-            ) : (
-              <li><Link to="/admin/login" onClick={() => setMenuOpen(false)}>تسجيل الدخول</Link></li>
-            )}
           </ul>
         </div>
       </div>
@@ -51,4 +43,3 @@ function Navbar({ user }) {
 }
 
 export default Navbar
-

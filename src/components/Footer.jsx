@@ -17,9 +17,8 @@ function Footer() {
             </h4>
             <ul className="contact-info">
               <li className="contact-item">
-                <div className="contact-icon phone-icon">
-                  <i className="fas fa-phone"></i>
-                </div>
+                
+                  
                 <div className="contact-details">
                   <a href="tel:01069700299" className="contact-link">01069700299</a>
                   <a href="tel:01011474476" className="contact-link">01011474476</a>

@@ -155,3 +155,5 @@ SELECT * FROM storage.buckets WHERE name = 'menu-pdf';
 -- 4. Public users can only read offers and view menu PDFs
 -- 5. Update the footer contact information in src/components/Footer.jsx
 
+
+
