@@ -4,10 +4,11 @@
   "description": "Restaurant website for العقدة",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "pdfjs-dist": "^4.4.168",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0",
-    "@supabase/supabase-js": "^2.38.4"
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
@@ -19,6 +20,3 @@
     "preview": "vite preview"
   }
 }
-
-
-
