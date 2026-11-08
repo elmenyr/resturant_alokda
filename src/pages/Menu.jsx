@@ -2,7 +2,30 @@ import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react'
 import { supabase, MENU_BUCKET } from '../lib/supabase'
 import './Menu.css'
 
-const PdfViewer = lazy(() => import('../components/PdfViewer'))
+// نبدأ تحميل العارض فوراً بالتوازي مع جلب رابط القائمة
+const loadViewer = () => import('../components/PdfViewer')
+const PdfViewer = lazy(loadViewer)
+
+const CACHE_KEY = 'alokda_menu_v1'
+const PHONE_DISPLAY = '01069700299'
+const PHONE_TEL = 'tel:01069700299'
+const PHONE_WA = 'https://wa.me/201069700299'
+
+const readCache = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem(CACHE_KEY)) || null
+  } catch {
+    return null
+  }
+}
+
+const writeCache = (value) => {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(value))
+  } catch {
+    /* التخزين غير متاح: لا مشكلة */
+  }
+}
 
 const formatDate = (iso) => {
   if (!iso) return null
@@ -18,17 +41,20 @@ const formatDate = (iso) => {
 }
 
 function Menu() {
-  const [menuUrl, setMenuUrl] = useState(null)
-  const [updatedAt, setUpdatedAt] = useState(null)
-  const [loading, setLoading] = useState(true)
+  // الكاش يجعل الفتح فورياً عند العودة للصفحة، ثم نتحقق من التحديثات بصمت
+  const cached = readCache()
+  const [menuUrl, setMenuUrl] = useState(cached?.url || null)
+  const [updatedAt, setUpdatedAt] = useState(cached?.updatedAt || null)
+  const [loading, setLoading] = useState(!cached)
   const [error, setError] = useState(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [viewerFailed, setViewerFailed] = useState(false)
+  const [copied, setCopied] = useState(false)
   const onViewerFailed = useCallback(() => setViewerFailed(true), [])
 
-  const loadMenu = useCallback(async () => {
+  const loadMenu = useCallback(async ({ silent = false } = {}) => {
     try {
-      setLoading(true)
+      if (!silent) setLoading(true)
       setError(null)
       setViewerFailed(false)
 
@@ -43,6 +69,7 @@ function Menu() {
       if (listError) {
         const msg = listError.message || ''
         if (msg.includes('not found') || msg.includes('does not exist')) {
+          setMenuUrl(null)
           setError('empty')
         } else {
           throw listError
@@ -52,30 +79,40 @@ function Menu() {
 
       if (data && data.length > 0) {
         const file = data[0]
+        const stamp = file.updated_at || file.created_at || null
         const { data: urlData } = supabase
           .storage
           .from(MENU_BUCKET)
           .getPublicUrl(file.name)
 
         if (urlData?.publicUrl) {
-          setMenuUrl(urlData.publicUrl)
-          setUpdatedAt(file.updated_at || file.created_at || null)
+          // إضافة وقت التحديث تضمن ظهور آخر نسخة بعد رفع قائمة جديدة
+          const url = stamp
+            ? `${urlData.publicUrl}${urlData.publicUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(stamp)}`
+            : urlData.publicUrl
+          setMenuUrl(url)
+          setUpdatedAt(stamp)
+          writeCache({ url, updatedAt: stamp })
         } else {
+          setMenuUrl(null)
           setError('empty')
         }
       } else {
+        setMenuUrl(null)
         setError('empty')
       }
     } catch (err) {
       console.error('Error loading menu:', err)
-      setError('failed')
+      // عند الفشل أثناء التحديث الصامت نكمل بالنسخة المخزنة
+      if (!silent) setError('failed')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    loadMenu()
+    loadViewer()
+    loadMenu({ silent: Boolean(readCache()) })
   }, [loadMenu])
 
   // ESC لإغلاق ملء الشاشة + منع تمرير الصفحة خلفه
@@ -90,6 +127,25 @@ function Menu() {
       document.body.style.overflow = prev
     }
   }, [isFullscreen])
+
+  const share = async () => {
+    const data = {
+      title: 'قائمة طعام العقدة',
+      text: 'تصفح قائمة طعام مطعم العقدة',
+      url: window.location.href
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share(data)
+        return
+      }
+      await navigator.clipboard.writeText(data.url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2200)
+    } catch {
+      /* المستخدم ألغى المشاركة */
+    }
+  }
 
   const dateText = formatDate(updatedAt)
 
@@ -112,6 +168,9 @@ function Menu() {
 
   return (
     <div className="menu-page">
+      <span className="menu-orb orb-a" aria-hidden="true"></span>
+      <span className="menu-orb orb-b" aria-hidden="true"></span>
+
       <div className="container">
         <header className="menu-hero">
           <span className="menu-eyebrow">
@@ -127,12 +186,19 @@ function Menu() {
           <p className="menu-subtitle">
             تصفح قائمتنا المميزة من الأطباق الشهية، واختر ما يناسب ذوقك
           </p>
-          {dateText && (
-            <p className="menu-updated">
-              <i className="far fa-clock" aria-hidden="true"></i>
-              آخر تحديث: {dateText}
-            </p>
-          )}
+
+          <div className="menu-chips">
+            {dateText && (
+              <span className="menu-chip">
+                <i className="far fa-clock" aria-hidden="true"></i>
+                آخر تحديث: {dateText}
+              </span>
+            )}
+            <button type="button" className="menu-chip menu-chip-btn" onClick={share}>
+              <i className={`fas ${copied ? 'fa-check' : 'fa-share-nodes'}`} aria-hidden="true"></i>
+              {copied ? 'تم نسخ الرابط' : 'مشاركة القائمة'}
+            </button>
+          </div>
         </header>
 
         {error && !menuUrl ? (
@@ -146,12 +212,18 @@ function Menu() {
             <p>
               {error === 'failed'
                 ? 'حدثت مشكلة في الاتصال، تأكد من الإنترنت وحاول مرة أخرى'
-                : 'نعمل على تحديث القائمة، يرجى المحاولة لاحقاً'}
+                : 'نعمل على تحديث القائمة، يمكنك التواصل معنا مباشرة'}
             </p>
-            <button type="button" className="menu-btn menu-btn-primary" onClick={loadMenu}>
-              <i className="fas fa-rotate-right" aria-hidden="true"></i>
-              إعادة المحاولة
-            </button>
+            <div className="menu-state-actions">
+              <button type="button" className="menu-btn menu-btn-primary" onClick={() => loadMenu()}>
+                <i className="fas fa-rotate-right" aria-hidden="true"></i>
+                إعادة المحاولة
+              </button>
+              <a href={PHONE_TEL} className="menu-btn menu-btn-ghost">
+                <i className="fas fa-phone" aria-hidden="true"></i>
+                {PHONE_DISPLAY}
+              </a>
+            </div>
           </div>
         ) : menuUrl ? (
           <>
@@ -231,13 +303,9 @@ function Menu() {
               )}
 
               <div className="menu-footer">
-                <a
-                  href={menuUrl}
-                  download
-                  className="menu-btn menu-btn-primary"
-                >
+                <a href={menuUrl} download className="menu-btn menu-btn-ghost">
                   <i className="fas fa-download" aria-hidden="true"></i>
-                  تحميل القائمة PDF
+                  تحميل PDF
                 </a>
                 <a
                   href={menuUrl}
@@ -250,6 +318,28 @@ function Menu() {
                 </a>
               </div>
             </section>
+
+            <aside className="order-bar" aria-label="تواصل معنا">
+              <div className="order-text">
+                <strong>جاهز تطلب؟</strong>
+                <span>كلمنا وهنجهز لك طلبك</span>
+              </div>
+              <div className="order-actions">
+                <a href={PHONE_TEL} className="order-btn order-call">
+                  <i className="fas fa-phone" aria-hidden="true"></i>
+                  اتصل الآن
+                </a>
+                <a
+                  href={PHONE_WA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="order-btn order-wa"
+                >
+                  <i className="fab fa-whatsapp" aria-hidden="true"></i>
+                  واتساب
+                </a>
+              </div>
+            </aside>
           </>
         ) : null}
       </div>
