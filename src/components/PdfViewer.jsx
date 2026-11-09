@@ -79,7 +79,8 @@ function PdfViewer({ url, fullscreen, onFailed }) {
     setSizes([])
     setReady(false)
     renderedKey.current.clear()
-    const task = pdfjsLib.getDocument(url)
+    // disableFontFace: يرسم الحروف كمسارات بدل خطوط المتصفح، وده بيحل تداخل الحروف العربية
+    const task = pdfjsLib.getDocument({ url, disableFontFace: true })
     task.promise
       .then(async (pdf) => {
         const pages = await Promise.all(
